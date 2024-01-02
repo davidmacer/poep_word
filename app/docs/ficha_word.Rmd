@@ -1,0 +1,309 @@
+---
+title: "Lineamientos, Estrategia y CRE"
+header-includes:
+   - \usepackage[default]{sourcesanspro}
+   - \usepackage[T1]{fontenc}
+mainfont: SourceSansPro
+output:
+  word_document: default
+  reference_docx: app/docs/style_document.docx
+  html_document:
+    df_print: paged
+  pdf_document: default
+always_allow_html: true
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(flextable)
+```
+
+```{r extrae_lineamiento, echo=FALSE}
+extrae_elementos_ficha <- function(df_moe_ugas, clave_uga) {
+  registro <- df_moe_ugas |>
+    filter(`Clave de UGA` == clave_uga)
+  politica <- registro$`Politica de Ordenamiento Ecológico`
+  clave <- registro$`Clave de UGA`
+  nombre_elemento_geografico <- registro$`Nombre de elemento geográfico`
+  lineamiento <-  registro$`Lineamiento Ecológico`
+  estrategia <- registro$Estrategia
+  objetivo <- registro$`Objetivos específicos`
+  programas <- registro$`Programas, Proyectos y Acciones`
+  uso_compatible <- registro$`Usos compatibles`
+  uso_condicionado <- registro$`Usos condicionados`
+  uso_incompatible <- registro$`Usos incompatibles`
+  responsables <- registro$`Responsables`
+  indicadores <- registro$`Indicadores de Seguimiento`
+  cre <- registro$`Criterios de Regulación Ecológica`
+  
+  return(list(politica = politica,
+              clave = clave,
+              nombre_elemento = nombre_elemento_geografico,
+              lineamiento = lineamiento,
+              estrategia = estrategia,
+              objetivo = objetivo,
+              programas = programas,
+              uso_compatible = uso_compatible,
+              uso_condicionado = uso_condicionado,
+              uso_incompatible = uso_incompatible,
+              responsables = responsables,
+              indicadores = indicadores,
+              cre = cre))
+}
+
+# render_child <- function(cve_uga) {
+#   registro <- extrae_elementos_ficha(moe_ugas, clave_uga = cve_uga)
+# cat(
+#   knitr::knit_child('ficha_child.Rmd', envir = environment(), quiet = TRUE)
+#   )
+# }
+```
+
+```{r importa_moe_ugas, include=FALSE}
+nombres_columnas <- c("Clave de UGA", "Politica de Ordenamiento Ecológico", "Nombre de elemento geográfico",
+                      "Lineamiento Ecológico", "Estrategia", "Objetivos específicos",
+                      "Indicadores de Seguimiento", "Usos compatibles", "Usos condicionados", "Usos incompatibles",
+                      "Criterios de Regulación Ecológica", "Programas, Proyectos y Acciones", "Responsables")
+moe_ugas_preservacion <- readxl::read_excel("./moe_ugas/MOE_UGAS PRESERVACIÓN.xlsx")
+moe_ugas_preservacion <- moe_ugas_preservacion |>
+  filter(`Politica de Ordenamiento Ecológico` == "PRESERVACION") |>
+  select(nombres_columnas)
+moe_ugas_restauracion <- readxl::read_excel("./moe_ugas/MOE_UGAS_RESTAURACION.xlsx")
+moe_ugas_restauracion <- moe_ugas_restauracion |>
+  filter(`Politica de Ordenamiento Ecológico` == "RESTAURACION") |>
+  select(nombres_columnas)
+moe_ugas_aprovechamiento <- readxl::read_excel("./moe_ugas/MOE_UGAS_APROVECHAMIENTO.xlsx")
+moe_ugas_aprovechamiento <- moe_ugas_aprovechamiento |>
+  filter(`Politica de Ordenamiento Ecológico` == "APROVECHAMIENTO SUSTENTABLE") |>
+  select(nombres_columnas)
+moe_ugas_conservacion <- readxl::read_excel("./moe_ugas/MOE_UGAS_CONSERVACION.xlsx")
+moe_ugas_conservacion <- moe_ugas_conservacion |>
+  filter(`Politica de Ordenamiento Ecológico` == "CONSERVACION") |>
+  select(nombres_columnas)
+
+moe_ugas <- rbind(moe_ugas_preservacion, moe_ugas_aprovechamiento, moe_ugas_conservacion, moe_ugas_restauracion)
+```
+
+```{r, include=FALSE}
+tabla_indicadores <- readxl::read_excel("./moe_ugas/MOE_UGAS_INDICADORES.xlsx", sheet = 1)
+tabla_responsables <- read.csv("./moe_ugas/responsables.csv")
+tabla_programas <- read.csv("./moe_ugas/programas_proyectos_acciones.csv")
+tabla_usos_compatibles <- read.csv("./moe_ugas/usos_compatibles.csv")
+tabla_usos_condicionados <- read.csv("./moe_ugas/usos_condicionados.csv")
+tabla_cre <- readxl::read_excel("./moe_ugas/cre.xlsx", sheet = 1)
+```
+
+```{r, echo=FALSE, results='asis', eval=TRUE}
+# render_child("PRS_NA_347")
+registro <- extrae_elementos_ficha(moe_ugas, clave_uga = "PRS_NA_347")
+cat(
+  knitr::knit_child('ficha_child.Rmd', envir = environment(), quiet = TRUE)
+  )
+```
+
+\newpage
+
+```{r, echo=FALSE, results='asis', eval=FALSE}
+registro <- extrae_elementos_ficha(moe_ugas, clave_uga = "PRS_NA_348")
+cat(
+  knitr::knit_child('ficha_child.Rmd', envir = environment(), quiet = TRUE)
+  )
+```
+
+\newpage
+
+```{r, echo=FALSE, results='asis', eval=FALSE}
+registro <- extrae_elementos_ficha(moe_ugas, clave_uga = "PRS_NA_349")
+cat(
+  knitr::knit_child('ficha_child.Rmd', envir = environment(), quiet = TRUE)
+  )
+```
+
+\newpage
+
+# UGAS Restauración
+
+```{r, include=FALSE}
+moe_ugas_rest <- readxl::read_excel("../resultados/moe_ugas_claves/MOE_UGAS_RESTAURACION_1229_V3.xlsx")
+tabla_indicadores <- readxl::read_excel("./moe_ugas/MOE_UGAS_INDICADORES.xlsx", sheet = 2)
+tabla_cre <- readxl::read_excel("./moe_ugas/cre.xlsx", sheet = 2)
+```
+
+```{r, echo=FALSE, results='asis', eval=FALSE}
+registro <- extrae_elementos_ficha(moe_ugas_rest, clave_uga = "RES_CA_204")
+cat(
+  knitr::knit_child('ficha_child.Rmd', envir = environment(), quiet = TRUE)
+  )
+```
+
+\newpage
+
+```{r, echo=FALSE, results='asis', eval=FALSE}
+registro <- extrae_elementos_ficha(moe_ugas_rest, clave_uga = "RES_CA_212")
+cat(
+  knitr::knit_child('ficha_child.Rmd', envir = environment(), quiet = TRUE)
+  )
+```
+
+\newpage
+
+```{r, echo=FALSE, results='asis', eval=FALSE}
+registro <- extrae_elementos_ficha(moe_ugas_rest, clave_uga = "RES_CA_226")
+cat(
+  knitr::knit_child('ficha_child.Rmd', envir = environment(), quiet = TRUE)
+  )
+```
+
+\newpage
+
+```{r, echo=FALSE, results='asis', eval=FALSE}
+registro <- extrae_elementos_ficha(moe_ugas_rest, clave_uga = "RES_CA_229")
+cat(
+  knitr::knit_child('ficha_child.Rmd', envir = environment(), quiet = TRUE)
+  )
+```
+
+\newpage
+
+```{r, echo=FALSE, results='asis', eval=FALSE}
+registro <- extrae_elementos_ficha(moe_ugas_rest, clave_uga = "RES_CA_232")
+cat(
+  knitr::knit_child('ficha_child.Rmd', envir = environment(), quiet = TRUE)
+  )
+```
+
+\newpage
+
+```{r, echo=FALSE, results='asis', eval=FALSE}
+registro <- extrae_elementos_ficha(moe_ugas_rest, clave_uga = "RES_CA_235")
+cat(
+  knitr::knit_child('ficha_child.Rmd', envir = environment(), quiet = TRUE)
+  )
+```
+
+\newpage
+
+```{r, echo=FALSE, results='asis', eval=FALSE}
+registro <- extrae_elementos_ficha(moe_ugas_rest, clave_uga = "RES_CA_252")
+cat(
+  knitr::knit_child('ficha_child.Rmd', envir = environment(), quiet = TRUE)
+  )
+```
+
+\newpage
+
+```{r, echo=FALSE, results='asis', eval=FALSE}
+registro <- extrae_elementos_ficha(moe_ugas_rest, clave_uga = "RES_CA_253")
+cat(
+  knitr::knit_child('ficha_child.Rmd', envir = environment(), quiet = TRUE)
+  )
+```
+
+\newpage
+
+```{r, echo=FALSE, results='asis', eval=FALSE}
+registro <- extrae_elementos_ficha(moe_ugas_rest, clave_uga = "RES_CA_265")
+cat(
+  knitr::knit_child('ficha_child.Rmd', envir = environment(), quiet = TRUE)
+  )
+```
+
+\newpage
+
+```{r, echo=FALSE, results='asis', eval=FALSE}
+registro <- extrae_elementos_ficha(moe_ugas_rest, clave_uga = "RES_CA_350")
+cat(
+  knitr::knit_child('ficha_child.Rmd', envir = environment(), quiet = TRUE)
+  )
+```
+
+\newpage
+
+```{r, echo=FALSE, results='asis', eval=FALSE}
+registro <- extrae_elementos_ficha(moe_ugas_rest, clave_uga = "RES_CA_351")
+cat(
+  knitr::knit_child('ficha_child.Rmd', envir = environment(), quiet = TRUE)
+  )
+```
+
+\newpage
+
+```{r, echo=FALSE, results='asis', eval=FALSE}
+registro <- extrae_elementos_ficha(moe_ugas_rest, clave_uga = "RES_CA_352")
+cat(
+  knitr::knit_child('ficha_child.Rmd', envir = environment(), quiet = TRUE)
+  )
+```
+
+\newpage
+
+```{r, echo=FALSE, results='asis', eval=FALSE}
+registro <- extrae_elementos_ficha(moe_ugas_rest, clave_uga = "RES_CA_353")
+cat(
+  knitr::knit_child('ficha_child.Rmd', envir = environment(), quiet = TRUE)
+  )
+```
+
+\newpage
+
+```{r, echo=FALSE, results='asis', eval=FALSE}
+registro <- extrae_elementos_ficha(moe_ugas_rest, clave_uga = "RES_CA_354")
+cat(
+  knitr::knit_child('ficha_child.Rmd', envir = environment(), quiet = TRUE)
+  )
+```
+
+\newpage
+
+```{r, echo=FALSE, results='asis', eval=FALSE}
+registro <- extrae_elementos_ficha(moe_ugas_rest, clave_uga = "RES_CA_355")
+cat(
+  knitr::knit_child('ficha_child.Rmd', envir = environment(), quiet = TRUE)
+  )
+```
+
+\newpage
+
+```{r, echo=FALSE, results='asis', eval=FALSE}
+registro <- extrae_elementos_ficha(moe_ugas_rest, clave_uga = "RES_CA_356")
+cat(
+  knitr::knit_child('ficha_child.Rmd', envir = environment(), quiet = TRUE)
+  )
+```
+
+\newpage
+
+```{r, echo=FALSE, results='asis', eval=FALSE}
+registro <- extrae_elementos_ficha(moe_ugas_rest, clave_uga = "RES_CA_357")
+cat(
+  knitr::knit_child('ficha_child.Rmd', envir = environment(), quiet = TRUE)
+  )
+```
+
+\newpage
+
+```{r, echo=FALSE, results='asis', eval=FALSE}
+registro <- extrae_elementos_ficha(moe_ugas_rest, clave_uga = "RES_CA_358")
+cat(
+  knitr::knit_child('ficha_child.Rmd', envir = environment(), quiet = TRUE)
+  )
+```
+
+\newpage
+
+```{r, echo=FALSE, results='asis', eval=FALSE}
+registro <- extrae_elementos_ficha(moe_ugas_rest, clave_uga = "RES_CA_359")
+cat(
+  knitr::knit_child('ficha_child.Rmd', envir = environment(), quiet = TRUE)
+  )
+```
+
+\newpage
+
+```{r, echo=FALSE, results='asis', eval=FALSE}
+registro <- extrae_elementos_ficha(moe_ugas_rest, clave_uga = "RES_CA_360")
+cat(
+  knitr::knit_child('ficha_child.Rmd', envir = environment(), quiet = TRUE)
+  )
+```

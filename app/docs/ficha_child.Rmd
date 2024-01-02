@@ -1,0 +1,193 @@
+```{r results='asis', echo=FALSE}
+# Programas, proyectos y acciones
+programas <- strsplit(registro$programas, ", ", perl = TRUE)[[1]]
+df_prog_aux <- tabla_programas |>
+  filter(Clave %in% programas)
+```
+```{r results='asis', echo=FALSE}
+# Instancia responsable y Clave
+resp_aux <- strsplit(registro$responsables, ",", perl = TRUE)[[1]]
+resp_aux <- resp_aux |> stringr::str_remove_all(" ")
+df_resp_aux <- tabla_responsables |>
+  filter(Clave %in% resp_aux)
+```
+```{r results='asis', echo=FALSE}
+# Usos compatibles preferentes y Clave del uso compatible
+usos_comp <- strsplit(registro$uso_compatible, ", ", perl = TRUE)[[1]]
+df_usos_comp_aux <- tabla_usos_compatibles |>
+  filter(Clave %in% usos_comp)
+```
+```{r results='asis', echo=FALSE}
+# Usos condicionados y Clave del uso condicionado
+if (!registro$uso_condicionado |> is.null()) {
+  usos_cond <- strsplit(registro$uso_condicionado, ", ", perl = TRUE)[[1]]
+  df_usos_cond_aux <- tabla_usos_condicionados |>
+    filter(clave %in% usos_cond)
+}
+
+```
+```{r results='asis', echo=FALSE}
+# Usos incompatibles y Clave del uso incompatible
+usos_incomp <- strsplit(registro$uso_incompatible, ", ", perl = TRUE)[[1]]
+df_usos_incomp_aux <- tabla_usos_compatibles |>
+  filter(Clave %in% usos_incomp)
+```
+```{r, echo=FALSE}
+# Indicadores y Clave de los indicadores
+indicadores <- registro$indicadores
+ind_aux <- strsplit(indicadores, ",", perl = TRUE)[[1]]
+ind_aux <- ind_aux |> stringr::str_remove_all(" ")
+df_ind_aux <- tabla_indicadores |>
+  filter(clave %in% ind_aux) |>
+  select(descripcion, clave)
+```
+```{r, echo=FALSE}
+# CRE y Clave
+cre <- registro$cre
+cre <- cre |>
+  stringr::str_remove_all(" ") |>
+  stringr::str_replace_all(";", ",")
+
+cre_aux <- strsplit(cre, ",", perl = TRUE)[[1]]
+df_cre_aux <- tabla_cre |>
+  filter(clave %in% cre_aux) |>
+  select(descripcion, clave)
+```
+```{r, echo=FALSE}
+first_column <- c(
+  paste0("UGA ", registro$politica),
+  paste0(registro$clave, " ", registro$nombre_elemento),
+  "Lineamiento",
+  registro$lineamiento,
+  "Estrategia",
+  registro$estrategia,
+  "Objetivo específico",
+  registro$objetivo
+  )
+
+df_lineam <- data.frame(first_column)
+```
+
+::: l-body-outset
+```{r results='asis', echo=FALSE}
+df_lineam |>
+  flextable() |>
+  delete_part(part = "header") |>
+  width(j = 1, width = 9.0) |>
+  align(align = "center", i = c(1, 2, 3, 5, 7)) |>
+  align(align = "justify", i = c(4, 6, 8)) |>
+  bold(i = 1) |>
+  fontsize(size = 9, part = "all") |>
+  bg(bg = "#42685B", i = 1) |>
+  bg(bg = "#64857B", i = c(2, 3, 5, 7)) |>
+  color(color = "white", i = 1) |>
+  color(color = "white", i = c(2, 3, 5, 7)) |>
+  font(fontname = "Adelle Sans Light", part = "header") |>
+  border_remove()
+```
+```{r results='asis', echo=FALSE}
+df_prog_aux |>
+  flextable() |>
+  add_header_lines(values = c("Programas proyectos y acciones")) |> 
+  set_header_labels(values = c("Título", "Clave")) |>
+  width(j = c(1, 2), width = c(5.0, 1.0)) |>
+  align(align = "center", part = "header") |>
+  align(align = c("justify", "center"), j = c(1, 2)) |>
+  bold(part = "header") |>
+  fontsize(size = 9, part = "all") |>
+  bg(bg = "#42685B", part = "header") |>
+  color(color = "white", part = "header") |>
+  font(fontname = "Adelle Sans Light", part = "header") |>
+  border_remove()
+```
+```{r results='asis', echo=FALSE}
+df_resp_aux |>
+  flextable() |>
+  add_header_lines(values = c("Responsables")) |> 
+  set_header_labels(values = c("Instancia responsable", "Clave")) |>
+  width(j = c(1, 2), width = c(5.0, 1.0)) |>
+  align(align = "center", part = "header") |>
+  align(align = c("justify", "center"), j = c(1, 2)) |>
+  bold(part = "header") |>
+  fontsize(size = 9, part = "all") |>
+  bg(bg = "#42685B", part = "header") |>
+  color(color = "white", part = "header") |>
+  font(fontname = "Adelle Sans Light", part = "header") |>
+  border_remove()
+```
+```{r results='asis', echo=FALSE}
+df_usos_comp_aux |>
+  flextable() |>
+  add_header_lines(values = c("Usos Compatibles Preferentes y Usos Condicionados")) |> 
+  set_header_labels(values = c("Usos compatibles preferentes", "Clave del uso compatible")) |>
+  width(j = c(1, 2), width = c(5.0, 1.0)) |>
+  align(align = "center", part = "header") |>
+  align(align = c("justify", "center"), j = c(1, 2)) |>
+  bold(part = "header") |>
+  fontsize(size = 9, part = "all") |>
+  bg(bg = "#42685B", part = "header") |>
+  color(color = "white", part = "header") |>
+  font(fontname = "Adelle Sans Light", part = "header") |>
+  border_remove()
+```
+```{r results='asis', echo=FALSE}
+df_usos_cond_aux |>
+  flextable() |>
+  set_header_labels(values = c("Uso condicionado", "Clave del uso condicionado")) |>
+  width(j = c(1, 2), width = c(5.0, 1.0)) |>
+  align(align = "center", part = "header") |>
+  align(align = c("justify", "center"), j = c(1, 2)) |>
+  bold(part = "header") |>
+  fontsize(size = 9, part = "all") |>
+  bg(bg = "#42685B", part = "header") |>
+  color(color = "white", part = "header") |>
+  font(fontname = "Adelle Sans Light", part = "header") |>
+  border_remove()
+```
+```{r results='asis', echo=FALSE}
+df_usos_incomp_aux |>
+  flextable() |>
+  add_header_lines(values = c("Usos incompatibles")) |> 
+  set_header_labels(values = c("Uso incompatible", "Clave del uso incompatible")) |>
+  width(j = c(1, 2), width = c(5.0, 1.0)) |>
+  align(align = "center", part = "header") |>
+  align(align = c("justify", "center"), j = c(1, 2)) |>
+  bold(part = "header") |>
+  fontsize(size = 9, part = "all") |>
+  bg(bg = "#42685B", part = "header") |>
+  color(color = "white", part = "header") |>
+  font(fontname = "Adelle Sans Light", part = "header") |>
+  border_remove()
+```
+```{r results='asis', echo=FALSE}
+df_ind_aux |>
+  flextable() |>
+  add_header_lines(values = c("Indicadores")) |> 
+  set_header_labels(values = c("Indicadores", "Clave de los indicadores")) |>
+  width(j = c(1, 2), width = c(5.0, 1.0)) |>
+  align(align = "center", part = "header") |>
+  align(align = c("justify", "center"), j = c(1, 2)) |>
+  bold(part = "header") |>
+  fontsize(size = 9, part = "all") |>
+  bg(bg = "#42685B", part = "header") |>
+  color(color = "white", part = "header") |>
+  font(fontname = "Adelle Sans Light", part = "header") |>
+  border_remove()
+```
+```{r results='asis', echo=FALSE}
+df_cre_aux |>
+  flextable() |>
+  add_header_lines(values = c("Criterios de Regulación Ecológica (CRE)")) |> 
+  set_header_labels(values = c("CRE", "Clave")) |>
+  width(j = c(1, 2), width = c(5.0, 1.0)) |>
+  align(align = "center", part = "header") |>
+  align(align = c("justify", "center"), j = c(1, 2)) |>
+  bold(part = "header") |>
+  fontsize(size = 9, part = "all") |>
+  bg(bg = "#42685B", part = "header") |>
+  color(color = "white", part = "header") |>
+  font(fontname = "Adelle Sans Light", part = "header") |>
+  border(border = NULL, part = "all")
+```
+:::
+
